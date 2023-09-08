@@ -161,7 +161,7 @@ impl<R: BufRead, W: Write> Challenge<R, W> {
                 &token_account,
                 &mint,
                 &owner
-            )
+            )?
         ]);
     
         
