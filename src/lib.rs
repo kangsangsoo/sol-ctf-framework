@@ -211,21 +211,21 @@ impl<R: BufRead, W: Write> Challenge<R, W> {
     }
 
     pub async fn run_ixs_full<T: Signers>(&mut self, ixs: &[Instruction], signers: &T, payer: &Pubkey) -> Result<(), Box<dyn Error>> {
-    let mut tx = Transaction::new_with_payer(ixs, Some(payer));
+        let mut tx = Transaction::new_with_payer(ixs, Some(payer));
 
-    tx.sign(signers, self.ctx.last_blockhash);
-    self.ctx.banks_client
+        tx.sign(signers, self.ctx.last_blockhash);
+        self.ctx.banks_client
         .process_transaction_with_preflight(tx)
         .await?;
 
-    Ok(())
-}
+        Ok(())
+    }
 
-pub async fn read_token_account(&mut self, pubkey: Pubkey) -> Result<spl_token::state::Account, Box<dyn Error>> {
-    Ok(spl_token::state::Account::unpack(
-        &self.ctx.banks_client.get_account(pubkey).await?.unwrap().data
-    )?)
-}
+    pub async fn read_token_account(&mut self, pubkey: Pubkey) -> Result<spl_token::state::Account, Box<dyn Error>> {
+        Ok(spl_token::state::Account::unpack(
+            &self.ctx.banks_client.get_account(pubkey).await?.unwrap().data
+        )?)
+    }
 
     /// Reads instruction accounts/data from input and sends in transaction to specified program
     ///
