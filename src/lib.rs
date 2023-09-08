@@ -144,7 +144,7 @@ impl<R: BufRead, W: Write> Challenge<R, W> {
     }
 
     pub async fn add_token_account_test(&mut self, mint: &Pubkey, owner: &Pubkey, seeds: &[&[u8]], program_id: &Pubkey) -> Result<(), Box<dyn Error>> {
-        let token_account = Pubkey::find_program_address(&[SEED_STORE, owner.as_ref()], &program_id).0;
+        let token_account = Pubkey::find_program_address(&seeds, &program_id).0;
         let payer = &self.ctx.payer;
       
         self.run_ix(&[
