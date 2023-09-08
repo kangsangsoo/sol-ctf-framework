@@ -147,22 +147,22 @@ impl<R: BufRead, W: Write> Challenge<R, W> {
         let token_account = Pubkey::find_program_address(&seeds, &program_id).0;
         let payer = &self.ctx.payer;
       
-        self.run_ix(&[
+        self.run_ix(
             solana_program::system_instruction::create_account(
             &payer.pubkey(),
             &token_account,
             10000000,
             spl_token::state::Account::LEN.try_into().unwrap(),
             &spl_token::ID,
-        )]);
-        self.run_ix(&[
+        ));
+        self.run_ix(
             spl_token::instruction::initialize_account(
                 &spl_token::ID,
                 &token_account,
                 &mint,
                 &owner
             )?
-        ]);
+        );
     
         
         Ok(())
