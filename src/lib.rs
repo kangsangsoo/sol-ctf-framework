@@ -144,26 +144,28 @@ impl<R: BufRead, W: Write> Challenge<R, W> {
     }
 
     pub async fn add_token_account_test(&mut self, mint: &Pubkey, owner: &Pubkey, seeds: &[&[u8]], program_id: &Pubkey) -> Result<(), Box<dyn Error>> {
-        let token_account = Pubkey::find_program_address(&[SEED_STORE, admin.as_ref()], &program_id).0;
-        let mut ixs = [
-                solana_program::system_instruction::create_account(
-                    &payer.pubkey(),
-                    &token_account,
-                    10000000,
-                    spl_token::state::Account::LEN.try_into().unwrap(),
-                    &spl_token::ID,
-                ),
-                spl_token::instruction::initialize_account(
-                    &spl_token::ID,
-                    &token_account,
-                    &mint,
-                    &owner
-                )?,
-        ];
-        self.run_ixs(ixs);
+        let token_account = Pubkey::find_program_address(&[SEED_STORE, owner.as_ref()], &program_id).0;
+        let payer = &self.ctx.payer;
+      
+        self.run_ix(&[
+            solana_program::system_instruction::create_account(
+            &payer.pubkey(),
+            &token_account,
+            10000000,
+            spl_token::state::Account::LEN.try_into().unwrap(),
+            &spl_token::ID,
+        )]);
+        self.run_ix(&[
+            spl_token::instruction::initialize_account(
+                &spl_token::ID,
+                &token_account,
+                &mint,
+                &owner
+            )
+        ]);
     
         
-        Ok()
+        Ok(())
     }
 
     pub async fn add_mint(&mut self) -> Result<Pubkey, Box<dyn Error>> {
